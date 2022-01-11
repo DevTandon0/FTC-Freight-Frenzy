@@ -98,20 +98,31 @@ public class TeleOP extends LinearOpMode {
 
             // POV Mode uses left stick to go forward, and right stick to turn.
             // - This uses basic math to combine motions and is easier to drive straight.
+            // left stick controls direction
+            // right stick X controls rotation
+
             float gamepad1LeftY = -gamepad1.left_stick_y;
             float gamepad1LeftX = gamepad1.left_stick_x;
             float gamepad1RightX = gamepad1.right_stick_x;
 
-            float leftPower = -gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
-            float rightPower = gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
-            float rightPowerRear = gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
-            float leftPowerRear = -gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
+            // holonomic formulas
 
-            rightPower = Range.clip(rightPower, -1, 1);
-            leftPower = Range.clip(leftPower, -1, 1);
-            leftPowerRear = Range.clip(leftPowerRear, -1, 1);
-            rightPowerRear = Range.clip(rightPowerRear, -1, 1);
+            float FrontLeft = -gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
+            float FrontRight = gamepad1LeftY - gamepad1LeftX - gamepad1RightX;
+            float BackRight = gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
+            float BackLeft = -gamepad1LeftY + gamepad1LeftX - gamepad1RightX;
 
+            // clip the right/left values so that the values never exceed +/- 1
+            FrontRight = Range.clip(FrontRight, -1, 1);
+            FrontLeft = Range.clip(FrontLeft, -1, 1);
+            BackLeft = Range.clip(BackLeft, -1, 1);
+            BackRight = Range.clip(BackRight, -1, 1);
+
+            // write the values to the motors
+            rightFront.setPower(FrontRight);
+            leftFront.setPower(FrontLeft);
+            leftRear.setPower(BackLeft);
+            rightRear.setPower(BackRight);
             if(gamepad1.right_bumper)
             {
                 ArmMotor.setPower(-1);
@@ -152,7 +163,6 @@ public class TeleOP extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
             telemetry.update();
         }
     }
