@@ -34,10 +34,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.util.Encoder;
 
 
 /**
@@ -66,6 +68,9 @@ public class TeleOP extends LinearOpMode {
     private DcMotor ShubaMotor = null;
     private Servo ClawLeft = null;
     private Servo ClawRight = null;
+    private Encoder leftEncoder = null;
+    private Encoder rightEncoder = null;
+    private Encoder frontEncoder = null;
 
     @Override
     public void runOpMode() {
@@ -83,6 +88,9 @@ public class TeleOP extends LinearOpMode {
         ShubaMotor = hardwareMap.get(DcMotor.class, "ShubaMotor");
         ClawLeft = hardwareMap.get(Servo.class, "ClawLeft");
         ClawRight = hardwareMap.get(Servo.class, "ClawRight");
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightRear"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightFront"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LeftRear"));
 
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
@@ -163,6 +171,9 @@ public class TeleOP extends LinearOpMode {
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("RawLeft", "Raw Left: " + leftEncoder.getCurrentPosition());
+            telemetry.addData("RawRight", "Raw Right: " + rightEncoder.getCurrentPosition());
+            telemetry.addData("RawFront", "Raw Front: " + frontEncoder.getCurrentPosition());
             telemetry.update();
         }
     }
