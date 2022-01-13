@@ -85,7 +85,7 @@ public class TeleOP extends LinearOpMode {
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         leftFront  = hardwareMap.get(DcMotor.class, "LeftFront");
-          rightFront = hardwareMap.get(DcMotor.class, "RightFront");
+        rightFront = hardwareMap.get(DcMotor.class, "RightFront");
         leftRear = hardwareMap.get(DcMotor.class, "LeftRear");
         rightRear = hardwareMap.get(DcMotor.class, "RightRear");
         ArmMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
@@ -95,9 +95,11 @@ public class TeleOP extends LinearOpMode {
         ClawRight = hardwareMap.get(Servo.class, "ClawRight");
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightRear"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightFront"));
+
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LeftRear"));
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
+
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         // Wait for the game to start (driver presses PLAY)
