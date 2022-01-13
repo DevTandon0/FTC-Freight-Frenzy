@@ -65,38 +65,41 @@ public class TeleOP extends LinearOpMode {
     private DcMotor leftRear = null;
     private DcMotor rightRear = null;
     private DcMotor ArmMotor = null;
+    //private DcMotor KanatArm = null;
     private DcMotor ShubaMotor = null;
     private Servo ClawLeft = null;
     private Servo ClawRight = null;
     private Encoder leftEncoder = null;
     private Encoder rightEncoder = null;
     private Encoder frontEncoder = null;
+    private Encoder armEncoder = null;
+    private int ArmHeight = 0;
 
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
+
         // Initialize the hardware variables. Note that the strings used here as parameters
         // to 'get' must correspond to the names assigned during the robot configuration
         // step (using the FTC Robot Controller app on the phone).
         leftFront  = hardwareMap.get(DcMotor.class, "LeftFront");
-        rightFront = hardwareMap.get(DcMotor.class, "RightFront");
+          rightFront = hardwareMap.get(DcMotor.class, "RightFront");
         leftRear = hardwareMap.get(DcMotor.class, "LeftRear");
         rightRear = hardwareMap.get(DcMotor.class, "RightRear");
         ArmMotor = hardwareMap.get(DcMotor.class, "ArmMotor");
+        //KanatArm = hardwareMap.get(DcMotor.class, "KanatArm");
         ShubaMotor = hardwareMap.get(DcMotor.class, "ShubaMotor");
         ClawLeft = hardwareMap.get(Servo.class, "ClawLeft");
         ClawRight = hardwareMap.get(Servo.class, "ClawRight");
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightRear"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "RightFront"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "LeftRear"));
-
         // Most robots need the motor on one side to be reversed to drive forward
         // Reverse the motor that runs backwards when connected directly to the battery
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         runtime.reset();
@@ -131,6 +134,9 @@ public class TeleOP extends LinearOpMode {
             leftFront.setPower(FrontLeft);
             leftRear.setPower(BackLeft);
             rightRear.setPower(BackRight);
+            /*
+            //Old Arm Code
+
             if(gamepad1.right_bumper)
             {
                 ArmMotor.setPower(-1);
@@ -143,7 +149,41 @@ public class TeleOP extends LinearOpMode {
             {
                 ArmMotor.setPower(0);
                 ArmMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            }*/
+
+            //New arm code
+
+            if(gamepad1.dpad_right){
+                ArmHeight = 0;
             }
+            if(gamepad1.dpad_down){
+                ArmHeight = 1;
+            }
+            if(gamepad1.dpad_left){
+                ArmHeight = 2;
+            }
+            if(gamepad1.dpad_up){
+                ArmHeight = 3;
+            }
+
+            if(ArmHeight == 0){
+                ArmMotor.setTargetPosition(-60);
+                ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                ArmMotor.setPower(0.5);
+                //KanatArm.setTargetPosition(0);
+                //KanatArm.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                //KanatArm.setPower(0.5);
+            }else if(ArmHeight == 1){
+                ArmMotor.setTargetPosition(-3500);
+                //KanatArm.setTargetPosition(0);
+            }else if(ArmHeight == 2) {
+                ArmMotor.setTargetPosition(-3120);
+                //KanatArm.setTargetPosition(0);
+            }else{
+                ArmMotor.setTargetPosition(-2800);
+                //KanatArm.setTargetPosition();
+            }
+
             if(gamepad1.x)
             {
                 ShubaMotor.setPower(0.7);
@@ -174,6 +214,7 @@ public class TeleOP extends LinearOpMode {
             telemetry.addData("RawLeft", "Raw Left: " + leftEncoder.getCurrentPosition());
             telemetry.addData("RawRight", "Raw Right: " + rightEncoder.getCurrentPosition());
             telemetry.addData("RawFront", "Raw Front: " + frontEncoder.getCurrentPosition());
+            telemetry.addData("ArmHeight", "Arm Height: " + ArmMotor.getCurrentPosition());
             telemetry.update();
         }
     }
