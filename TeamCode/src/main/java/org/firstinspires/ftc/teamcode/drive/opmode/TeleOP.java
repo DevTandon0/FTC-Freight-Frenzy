@@ -75,6 +75,10 @@ public class TeleOP extends LinearOpMode {
     private Encoder frontEncoder = null;
     private Encoder armEncoder = null;
     private int ArmHeight = 0;
+    private float PrecisionMult = 1;
+    private int ArmHeightOffset = 0;
+    private boolean APressed = false;
+    private boolean BPressed = false;
 
     @Override
     public void runOpMode() {
@@ -133,11 +137,18 @@ public class TeleOP extends LinearOpMode {
             BackLeft = Range.clip(BackLeft, -1, 1);
             BackRight = Range.clip(BackRight, -1, 1);
 
+            // Precision Mode
+
+            float trueFrontLeft = FrontLeft * PrecisionMult;
+            float trueFrontRight = FrontRight * PrecisionMult;
+            float trueBackLeft = BackLeft * PrecisionMult;
+            float trueBackRight = BackRight * PrecisionMult;
+
             // write the values to the motors
-            rightFront.setPower(FrontRight);
-            leftFront.setPower(FrontLeft);
-            leftRear.setPower(BackLeft);
-            rightRear.setPower(BackRight);
+            rightFront.setPower(trueFrontRight);
+            leftFront.setPower(trueFrontLeft);
+            leftRear.setPower(trueBackLeft);
+            rightRear.setPower(trueBackRight);
             /*
             //Old Arm Code
 
@@ -171,18 +182,18 @@ public class TeleOP extends LinearOpMode {
             }
 
             if(ArmHeight == 0){
-                ArmMotor.setTargetPosition(-40);
+                ArmMotor.setTargetPosition(-40 + ArmHeightOffset);
                 ArmMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 ArmMotor.setPower(0.5);
                 KanataServo.setPosition(0.85);
             }else if(ArmHeight == 1){
-                ArmMotor.setTargetPosition(-3500);
+                ArmMotor.setTargetPosition(-3500 + ArmHeightOffset);
                 KanataServo.setPosition(0.96);
             }else if(ArmHeight == 2) {
-                ArmMotor.setTargetPosition(-3220);
+                ArmMotor.setTargetPosition(-3220 + ArmHeightOffset);
                 KanataServo.setPosition(0.91);
             }else{
-                ArmMotor.setTargetPosition(-2900);
+                ArmMotor.setTargetPosition(-2900 + ArmHeightOffset);
                 KanataServo.setPosition(0.88);
             }
 
@@ -207,6 +218,26 @@ public class TeleOP extends LinearOpMode {
             else
             {
                 ShubaMotor.setPower(0);
+            }
+
+            if(gamepad1.left_bumper){
+                PrecisionMult = 1;
+            }
+            if(gamepad1.right_bumper){
+                PrecisionMult = 0.5F;
+            }
+
+            if(gamepad2.a && APressed == false){
+                ArmHeightOffset = ArmHeightOffset + 2;
+                APressed = true;
+            }else if(!gamepad2.a){
+                APressed = false;
+            }
+            if(gamepad2.b && BPressed == false){
+                ArmHeightOffset = ArmHeightOffset - 2;
+                BPressed = true;
+            }else if(!gamepad2.a){
+                BPressed = false;
             }
 
             // Send calculated power to wheels
